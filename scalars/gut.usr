@@ -1,0 +1,289 @@
+
+c-----------------------------------------------------------------------
+c  nek5000 user-file template
+c
+c  user specified routines:
+c     - uservp  : variable properties
+c     - userf   : local acceleration term for fluid
+c     - userq   : local source term for scalars
+c     - userbc  : boundary conditions
+c     - useric  : initial conditions
+c     - userchk : general purpose routine for checking errors etc.
+c     - userqtl : thermal divergence for lowMach number flows 
+c     - usrdat  : modify element vertices 
+c     - usrdat2 : modify mesh coordinates
+c     - usrdat3 : general purpose routine for initialization
+c     
+c-----------------------------------------------------------------------
+      subroutine uservp (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'TOTAL'
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userf(ix,iy,iz,eg) ! set acceleration term
+      include 'SIZE'
+      include 'TOTAL'
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userq  (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'TOTAL'
+      include 'NEKUSE'
+      real alphan, alphab, b0, N0, R_0, u_avg, N_bar
+      real dn, db, g
+      b0 = 1.7e-14
+      N0 = 100
+      N_bar = 20
+      R_0 = 2e-2
+      u_avg = 120e-6
+      g = 1e-6
+      alphan = 2.8e7
+      alphab = 2e-3
+
+c      dn = alphan*R*b0/(u_avg*N0)
+c      db = alphab*R/u_avg
+      dn =param(50)
+      db =param(51)
+      if (ifield.eq.3) then
+         ps2 = ps(2)
+         ps1 = ps(1)
+	 qvol = -(dn*ps2*ps1/(0.1+ps1))
+c	 print *, 'qvol_s1 = ', qvol
+      elseif (ifield.eq.4) then
+             ps1 = ps(1)
+             ps2 = ps(2)
+             qvol = db*ps2*ps1/(0.1+ps1)
+c	     print *, 'qvol_s2 = ', qvol
+      elseif (ifield.eq.5) then
+c             ps1 = ps(1)
+c             ps2 = ps(2)
+c	     ps3 = ps(3)
+c             qvol = -(dn*ps3*ps1/(0.1+ps1))
+      endif
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userbc(ix,iy,iz,iside,ieg) ! set up boundary conditions
+      include 'SIZE'
+      include 'TOTAL'
+      include 'NEKUSE'
+
+      integer ix,iy,iz,ieg,ie
+ 
+      real alpha, D, A, omega, uc, b
+      real re, vel
+      complex*16 i, z1, z2, J0z1, J0z2
+  
+      parameter (i = (0.0d0, 1.0d0)) 
+      real part1, part2
+      integer max_m
+      parameter (max_m = 30)
+
+      real factorial(max_m + 1)
+      integer m
+    
+      re = param(2)
+      vel = ((1/re)*1e-6)/(0.015)
+      ! Initialize the parameters
+      uc = 1.0
+      if (y. ge. 0.9) then
+         A = 0
+      else
+         A = param(3)
+      endif
+      f = param(4)
+      D = 0.015
+      alpha = D*SQRT(2.0 * pi * f/(1e-6))
+      
+      omega = 2.0 * pi * f * D/vel
+         
+      factorial(1) = 1.0
+      do m = 2, max_m + 1
+      	 factorial(m) = factorial(m-1) * (m-1)
+      enddo
+      
+      ! Calculate the argument for the Bessel function
+      if (y. le. 0.9) then
+        z1 = i**1.5 * alpha * y/0.9
+      else
+        z1 = 0
+      endif
+      z2 = i**1.5 * alpha
+
+      J0z1 = 0.0
+      J0z2 = 0.0
+
+      ! New approximation up to 30 terms
+      
+      do m = 0, max_m
+      	 J0z1 = J0z1 + ((-1.0)**m / (factorial(m+1)**2)) *
+     $        (z1/2.0)**(2 * m)
+         J0z2 =	J0z2 + ((-1.0)**m / (factorial(m+1)**2)) *
+     $        (z2/2.0)**(2 * m)     
+      enddo
+
+      if (y. ge. 0.9) then 
+         part1 = 0.0
+      else
+         part1 = 1.0 - (y/0.9)**2
+      endif
+      
+      part2 = real((1.0 - (J0z1 / J0z2)))
+
+      ! Calculate the velocity components
+      ux = uc * (part1 + A * part2 * SIN(omega * time))
+c      ux = 0.0
+c      ux = part1
+c      ux = 
+      uy = 0.0
+      uz = 0.0
+      b =param(53)
+      temp = 0.0
+      if (ifield.eq.3) then
+         ps1 = ps(1)
+         flux = -b*ps1
+c         flux = 0.0
+	 temp = 1.0
+      elseif (ifield.eq.4) then
+             temp = 0.0
+             flux = 0.0
+      elseif (ifield.eq.5) then
+c             ps1 = ps(1)
+c             flux = -1*ps1
+c	     temp = 1.0
+             temp = 0.0
+	     flux = 0.0
+      endif
+
+      return
+      end
+
+c-----------------------------------------------------------------------
+      subroutine useric(ix,iy,iz,eg) ! set up initial conditions
+c     implicit none
+      integer ix,iy,iz,eg
+
+      include 'SIZE'
+      include 'TOTAL'
+      include 'NEKUSE'
+
+
+     
+c      if (y. le. 0.1) then
+c         ux = 0.0
+c      else
+      ux   = 1-(y)**2
+c      endif
+c      ux   = 1.0*(1-((1-y)/0.9)**2)
+c      ux   = 0.0
+      uy   = 0.0
+      uz   = 0.0
+
+c      temp = 0.0
+
+      if (ifield.eq.3) then
+c         temp = 1.0*exp(-((x-1)**2)/(2*(0.4)**2))
+          temp = 0.0
+      elseif (ifield.eq.4) then
+             temp = 1.0       
+c             if (y. le. 0.09) then
+c             temp = 1.0*exp(-((x-1)**2)/(2*(0.4)**2))
+c	     flux = 0.0
+c             else
+c	        temp = 0.0
+c	     endif
+             flux = 0
+      elseif (ifield.eq.5) then
+c         flux = 0.0
+          temp = 0.0
+      endif
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userchk()
+      include 'SIZE'
+      include 'TOTAL'
+
+      integer total_points
+     
+c     call gen_rea_full(2)
+
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine usrdat()   ! This routine to modify element vertices
+c      include 'SIZE'
+c      include 'TOTAL'
+
+c      call setbc(215,1,'W  ')
+c      call setbc(214,1,'W  ')
+c      call setbc(212,1,'v  ')
+c      call setbc(213,1,'o  ')
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine usrdat2()  ! This routine to modify mesh coordinates
+c     implicit none
+      include 'SIZE'
+      include 'TOTAL'
+
+      integer e, f
+      real    sn(3), sr(3), tol
+      real    tmp(lx1, ly1, lz1, nelt)
+      real    xmid, ymid, zmid
+      real    xref, yref, zref
+      real    dxref, dyref, dzref, rtmp
+
+      common /clcd/ U0,alpha,cos_alpha,sin_alpha
+
+
+      do iel=1,nelv
+      do ifc=1,2*ndim
+        id_face = bc(5,ifc,iel,1)
+        if (id_face.eq.332) then
+            cbc(ifc,iel,1) = 'v  '
+            cbc(ifc,iel,2) = 't  '
+            cbc(ifc,iel,3) = 't  '
+            cbc(ifc,iel,4) = 't  '
+            cbc(ifc,iel,5) = 't  '
+         elseif (id_face.eq.330) then
+            cbc(ifc,iel,1) = 'O  '
+            cbc(ifc,iel,2) = 't  '
+            cbc(ifc,iel,3) = 'I  '
+            cbc(ifc,iel,4) = 'I  '
+            cbc(ifc,iel,5) = 'I  '
+         elseif (id_face.eq.331) then
+            cbc(ifc,iel,1) = 'W  '
+            cbc(ifc,iel,2) = 'I  '
+            cbc(ifc,iel,3) = 'f  '
+            cbc(ifc,iel,4) = 'f  '
+            cbc(ifc,iel,5) = 'f  '
+         elseif (id_face.eq.329) then
+            cbc(ifc,iel,1) = 'A  '
+            cbc(ifc,iel,2) = 'A  '
+            cbc(ifc,iel,3) = 'A  '
+            cbc(ifc,iel,4) = 'A  '
+            cbc(ifc,iel,5) = 'A  '
+         endif
+
+      enddo
+      enddo
+
+c      call gen_rea_full(2)
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine usrdat3
+      include 'SIZE'
+      include 'TOTAL'
+
+      return
+      end
+c-----------------------------------------------------------------------
