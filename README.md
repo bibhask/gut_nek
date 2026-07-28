@@ -107,23 +107,7 @@ Official documentation:
 
 https://nek5000.github.io/NekDoc/
 
-Compile a case using:
 
-```bash
-makenek case_name
-```
-
-Run it using:
-
-```bash
-nekbmpi case_name number_of_processes
-```
-
-For example:
-
-```bash
-nekbmpi case_name 4
-```
 
 All Nek5000 files belonging to one case must have the same filename prefix.
 
@@ -137,6 +121,6 @@ This repository is licensed under the Apache License 2.0. See the `LICENSE` file
 
 For questions regarding the code or simulations, contact:
 
-**Your Name**
-**Your University**
-**Your Email**
+**Bibhas Kumar**
+**Iowa State University**
+**bibhas@iastate.edu**
