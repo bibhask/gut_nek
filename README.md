@@ -4,17 +4,17 @@
 
 This repository contains the mesh-generation scripts and Nek5000 files used for the flow and passive-scalar simulations reported by Kumar and Mukherjee.
 
-The repository is organized into three main components:
+The repository contains three main components:
 
 1. **Mesh-generation files**
 2. **Flow-simulation files**
 3. **Passive-scalar simulation files**
 
-The model parameters controlling the Reynolds number, scalar diffusivities, reaction rates, and nutrient absorption can be changed directly in the corresponding Nek5000 `.rea` files, as described below.
+The main nondimensional parameters, including the Reynolds number, Péclet numbers, Damköhler numbers, and nutrient-absorption coefficient, can be varied directly through the Nek5000 `.rea` files as described below.
 
 ---
 
-# 1. Mesh Generation
+## 1. Mesh Generation
 
 The Python script generates a Gmsh geometry file with the `.geo` extension.
 
@@ -30,7 +30,7 @@ Run the Python script using
 python3 generate_geometry.py
 ```
 
-The generated `.geo` file can then be opened in [Gmsh](https://gmsh.info/). Generate the mesh and export it as a `.msh` file.
+Open the generated `.geo` file in [Gmsh](https://gmsh.info/), generate the mesh, and export it as a `.msh` file.
 
 When exporting the mesh, use:
 
@@ -52,57 +52,54 @@ Next, run
 genmap
 ```
 
-to generate the corresponding `.ma2` mesh-partitioning file.
+to generate the corresponding `.ma2` file.
 
 ---
 
-# 2. Flow Simulation
+## 2. Flow Simulation
 
 The flow-simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
 
 Typical files include:
 
-* `.usr` — user-defined routines, including initial conditions, boundary conditions, forcing, and other case-specific operations
+* `.usr` — initial conditions, boundary conditions, forcing terms, and other user-defined routines
 * `.rea` — simulation parameters
 * `.re2` — Nek5000 mesh
 * `.ma2` — mesh-partitioning information
 * `SIZE` — memory allocation and spectral-element discretization settings
 
-## Governing equation
+### Governing Equations
 
 The nondimensional momentum equation solved in the flow simulations is
 
-$$
+```math
 \mathrm{Re}
 \left(
 \frac{\partial \mathbf{u}}{\partial t}
 +
 \mathbf{u}\cdot\nabla\mathbf{u}
 \right)
-=======
-
+=
 -\nabla P
 +
-\nabla^2\mathbf{u},
-$$
-
-where
-
-* $\mathbf{u}$ is the velocity field,
-* $P$ is the nondimensional pressure, and
-* $\mathrm{Re}$ is the Reynolds number.
+\nabla^2\mathbf{u}.
+```
 
 The incompressibility condition is
 
-$$
+```math
 \nabla\cdot\mathbf{u}=0.
-$$
+```
 
-## Changing the Reynolds number
+Here,
 
-For the nondimensional formulation used here, the Reynolds number is specified using **Parameter 2 (`P002`)** in the `.rea` file.
+* `u` is the nondimensional velocity field,
+* `P` is the nondimensional pressure, and
+* `Re` is the Reynolds number.
 
-Nek5000 interprets a negative value of `P002` as the Reynolds number.
+### Changing the Reynolds Number
+
+For the nondimensional formulation used in this repository, the Reynolds number is controlled through **Parameter 2 (`P002`)** in the `.rea` file.
 
 For example,
 
@@ -112,9 +109,9 @@ For example,
 
 corresponds to
 
-$$
+```math
 \mathrm{Re}=100.
-$$
+```
 
 Similarly,
 
@@ -122,11 +119,11 @@ Similarly,
 -10.000      p002
 ```
 
-gives
+corresponds to
 
-$$
+```math
 \mathrm{Re}=10,
-$$
+```
 
 and
 
@@ -134,172 +131,122 @@ and
 -1000.000    p002
 ```
 
-gives
+corresponds to
 
-$$
+```math
 \mathrm{Re}=1000.
-$$
+```
 
-Therefore, to run the flow simulation at a different Reynolds number, modify `P002` in the corresponding `.rea` file.
+Therefore, to vary the Reynolds number, modify `P002` in the corresponding `.rea` file.
 
-The velocity initial conditions and boundary conditions used for the simulations are defined in the `.usr` file.
+The velocity initial conditions and boundary conditions are defined in the corresponding `.usr` file.
 
 ---
 
-# 3. Passive-Scalar Simulation
+## 3. Passive-Scalar Simulation
 
 The passive-scalar simulations solve for two scalar fields:
 
-* **Passive scalar 1 (`PS1`)**: nutrient concentration, $N$
-* **Passive scalar 2 (`PS2`)**: bacterial concentration, $B$
+* **Passive scalar 1 (`PS1`)** — nutrient concentration, `N`
+* **Passive scalar 2 (`PS2`)** — bacterial concentration, `B`
 
 The scalar fields undergo advection, diffusion, and reaction.
 
-## Governing equations
+### Nutrient Equation: PS1
 
-### Nutrient concentration — PS1
+The nutrient concentration satisfies
 
-The nutrient field satisfies
-
-$$
+```math
 \frac{\partial N}{\partial t}
 +
 \mathbf{u}\cdot\nabla N
-=======================
+=
+D_N^* \nabla^2 N
+-
+\mathrm{PARAM}(50)
+B\frac{N}{\bar{N}+N}.
+```
 
-## D_N^* \nabla^2 N
+The diffusion coefficient is
 
-\mathrm{PARAM}(50),
-B\frac{N}{\bar{N}+N},
-$$
-
-where
-
-$$
+```math
 D_N^*=\frac{1}{\mathrm{Pe}_N}.
-$$
+```
 
 For the present model,
 
-$$
+```math
 \mathrm{PARAM}(50)
-==================
+=
+\mathrm{Da}_N
+=
+\kappa\,\mathrm{Da}_B.
+```
 
-# \mathrm{Da}_N
+Therefore, the nutrient equation can equivalently be written as
 
-\kappa,\mathrm{Da}_B.
-$$
-
-Thus, the equation can equivalently be written as
-
-$$
+```math
 \frac{\partial N}{\partial t}
 +
 \mathbf{u}\cdot\nabla N
-=======================
-
-## \frac{1}{\mathrm{Pe}_N}\nabla^2N
-
+=
+\frac{1}{\mathrm{Pe}_N}\nabla^2N
+-
 \mathrm{Da}_N
 B\frac{N}{\bar{N}+N}.
-$$
+```
 
 ---
 
-### Bacterial concentration — PS2
+### Bacterial Equation: PS2
 
-The bacterial field satisfies
+The bacterial concentration satisfies
 
-$$
+```math
 \frac{\partial B}{\partial t}
 +
 \mathbf{u}\cdot\nabla B
-=======================
-
+=
 D_B^* \nabla^2 B
 +
-\mathrm{PARAM}(51),
-B\frac{N}{\bar{N}+N},
-$$
+\mathrm{PARAM}(51)
+B\frac{N}{\bar{N}+N}.
+```
 
-where
+The diffusion coefficient is
 
-$$
+```math
 D_B^*=\frac{1}{\mathrm{Pe}_B}.
-$$
+```
 
 For the present model,
 
-$$
+```math
 \mathrm{PARAM}(51)=\mathrm{Da}_B.
-$$
+```
 
-Therefore,
+Therefore, the bacterial equation can equivalently be written as
 
-$$
+```math
 \frac{\partial B}{\partial t}
 +
 \mathbf{u}\cdot\nabla B
-=======================
-
+=
 \frac{1}{\mathrm{Pe}_B}\nabla^2B
 +
 \mathrm{Da}_B
 B\frac{N}{\bar{N}+N}.
-$$
+```
 
-Here, $\bar{N}$ is the nutrient concentration scale appearing in the Monod-type reaction term.
+Here, `N-bar` is the nutrient concentration scale appearing in the Monod-type reaction term.
 
 ---
 
-# 4. Changing the Passive-Scalar Diffusivities
+## 4. Passive-Scalar Diffusion Parameters
 
-Nek5000 uses the thermal-equation terminology `CONDUCT` and `RHOCP` for passive-scalar transport coefficients.
+The scalar diffusion coefficients are specified in the passive-scalar section of the `.rea` file.
 
-For a passive scalar $\phi_i$,
-
-$$
-D_i^*
-=====
-
-\frac{\mathrm{CONDUCT}_i}{\mathrm{RHOCP}_i}.
-$$
-
-In the provided simulations,
-
-$$
-\mathrm{RHOCP}_i=1,
-$$
-
-so that
-
-$$
-D_i^*=\mathrm{CONDUCT}_i.
-$$
-
-Therefore,
-
-$$
-\boxed{
-\mathrm{CONDUCT}_{PS1}
-======================
-
-\frac{1}{\mathrm{Pe}_N}
-}
-$$
-
-and
-
-$$
-\boxed{
-\mathrm{CONDUCT}_{PS2}
-======================
-
-\frac{1}{\mathrm{Pe}_B}
-}
-$$
-
-The relevant portion of the `.rea` file is
+A typical section is
 
 ```text
 1.00000     p102
@@ -316,12 +263,25 @@ The relevant portion of the `.rea` file is
 T      IFFLOW
 ```
 
-For the two passive scalars used in this repository, the first two entries of the `CONDUCT` data are
+For the two passive scalars considered here, the first two `CONDUCT` entries correspond to the diffusion coefficients of `PS1` and `PS2`.
+
+Thus,
 
 ```text
-0.00013       0.00013
-   ↑             ↑
-   PS1           PS2
+First CONDUCT value  → PS1 → nutrient diffusion
+Second CONDUCT value → PS2 → bacterial diffusion
+```
+
+For this nondimensional formulation,
+
+```math
+D_N^*=\frac{1}{\mathrm{Pe}_N}
+```
+
+and
+
+```math
+D_B^*=\frac{1}{\mathrm{Pe}_B}.
 ```
 
 Therefore,
@@ -331,24 +291,22 @@ First CONDUCT value  = 1/Pe_N
 Second CONDUCT value = 1/Pe_B
 ```
 
-For example, the provided values
+For example,
 
 ```text
 0.00013       0.00013
 ```
 
-correspond to approximately
+corresponds approximately to
 
-$$
+```math
 \mathrm{Pe}_N
-=============
-
+=
 \mathrm{Pe}_B
-\approx
-7692.
-$$
+\approx 7692.
+```
 
-To use different Péclet numbers, replace these two values with
+To run a simulation with different Péclet numbers, replace these entries with
 
 ```text
 1/Pe_N       1/Pe_B
@@ -356,29 +314,43 @@ To use different Péclet numbers, replace these two values with
 
 respectively.
 
-For example, for
+For example, if
 
-$$
-\mathrm{Pe}_N=1000,
-\qquad
+```math
+\mathrm{Pe}_N=1000
+```
+
+and
+
+```math
 \mathrm{Pe}_B=500,
-$$
+```
 
-use
+then
+
+```math
+\frac{1}{\mathrm{Pe}_N}=0.001
+```
+
+and
+
+```math
+\frac{1}{\mathrm{Pe}_B}=0.002.
+```
+
+The corresponding `.rea` line becomes
 
 ```text
 0.00100       0.00200       1.00000       1.00000       1.00000
 ```
 
-while keeping the corresponding `RHOCP` values equal to `1.00000`.
-
 ---
 
-# 5. Changing the Reaction Parameters
+## 5. Reaction Parameters
 
-The reaction parameters are specified directly in the `.rea` file.
+The reaction parameters are specified directly through Nek5000 parameters in the `.rea` file.
 
-The relevant entries are
+The relevant portion is
 
 ```text
 0.00000     p049
@@ -387,31 +359,31 @@ The relevant entries are
 0.00100     p053 BETA ABSORPTION
 ```
 
-Their meanings are:
+The parameters have the following meanings:
 
-| Nek5000 parameter | Model parameter                     | Description                           |
-| ----------------- | ----------------------------------- | ------------------------------------- |
-| `P050`            | $\mathrm{Da}_N=\kappa\mathrm{Da}_B$ | Nutrient-consumption Damköhler number |
-| `P051`            | $\mathrm{Da}_B$                     | Bacterial-growth Damköhler number     |
-| `P053`            | $\beta$                             | Nutrient absorption parameter         |
+| `.rea` parameter | Model parameter     | Description                           |
+| ---------------- | ------------------- | ------------------------------------- |
+| `P050`           | `Da_N = kappa Da_B` | Nutrient-consumption Damköhler number |
+| `P051`           | `Da_B`              | Bacterial-growth Damköhler number     |
+| `P053`           | `beta`              | Nutrient-absorption coefficient       |
 
-Thus, the default values in the provided case are
+For the values shown above,
 
-$$
+```math
 \mathrm{Da}_N=0.03,
-$$
+```
 
-$$
+```math
 \mathrm{Da}_B=0.03,
-$$
+```
 
 and
 
-$$
+```math
 \beta=0.001.
-$$
+```
 
-These values can be changed directly in the `.rea` file to explore different reaction regimes.
+These values can be changed directly in the `.rea` file.
 
 For example, changing
 
@@ -427,115 +399,119 @@ to
 
 changes the bacterial Damköhler number from
 
-$$
+```math
 \mathrm{Da}_B=0.03
-$$
+```
 
 to
 
-$$
+```math
 \mathrm{Da}_B=0.10.
-$$
+```
 
 ---
 
-# 6. Nutrient Absorption Boundary Condition
+## 6. Nutrient Absorption Boundary Condition
 
 The nutrient field (`PS1`) includes an absorption boundary condition of the form
 
-$$
-\mathrm{flux}
-=============
+```math
+\mathrm{flux}=-\beta N.
+```
 
--\beta N,
-$$
+The absorption coefficient is specified as
 
-where
-
-$$
+```math
 \beta=\mathrm{PARAM}(53).
-$$
+```
 
-Thus, in the Nek5000 user routines the condition is implemented in the form
+Therefore, the boundary condition is implemented in the `.usr` file using the equivalent form
 
 ```fortran
 flux = -param(53)*N
 ```
 
-for the nutrient scalar.
+or, in terms of the passive-scalar field,
 
-Equivalently,
-
-$$
+```math
 \mathrm{flux}
-=============
+=
+-\mathrm{PARAM}(53)\,\mathrm{PS1}.
+```
 
--\mathrm{PARAM}(53),PS1.
-$$
+The value of `PARAM(53)` is specified through `P053` in the `.rea` file.
 
-The value of `PARAM(53)` is specified through `P053` in the `.rea` file:
+For example,
 
 ```text
 0.00100     p053 BETA ABSORPTION
 ```
 
-Therefore, changing `P053` changes the nutrient absorption strength without changing the governing equations.
+corresponds to
 
-The corresponding nutrient boundary must use the Nek5000 user-defined scalar flux boundary condition (`f`) where this flux is imposed.
+```math
+\beta=0.001.
+```
 
----
+Changing `P053` therefore changes the strength of nutrient absorption at the corresponding boundary.
 
-# 7. Main Parameters to Vary
-
-The principal nondimensional parameters can therefore be varied as follows:
-
-| Physical/model parameter            | Nek5000 input                        | Where to change |
-| ----------------------------------- | ------------------------------------ | --------------- |
-| Reynolds number $\mathrm{Re}$       | `-P002`                              | `.rea`          |
-| $1/\mathrm{Pe}_N$                   | First `CONDUCT` value                | `.rea`          |
-| $1/\mathrm{Pe}_B$                   | Second `CONDUCT` value               | `.rea`          |
-| $\mathrm{Da}_N=\kappa\mathrm{Da}_B$ | `P050`                               | `.rea`          |
-| $\mathrm{Da}_B$                     | `P051`                               | `.rea`          |
-| Absorption coefficient $\beta$      | `P053`                               | `.rea`          |
-| Initial conditions                  | user routines                        | `.usr`          |
-| Boundary conditions                 | user routines / boundary identifiers | `.usr` / mesh   |
-| Polynomial order                    | `lx1`                                | `SIZE`          |
-
-For most parameter sweeps, the quantities of primary interest can therefore be changed directly in the `.rea` file.
+The scalar flux boundary condition itself is defined in the `.usr` file.
 
 ---
 
-# 8. Example Parameter Modification
+## 7. Main Parameters to Vary
 
-As an example, suppose a simulation is required with
+The principal nondimensional parameters used in the simulations can be modified as follows:
 
-$$
+| Model parameter                   | Nek5000 input          | File   |
+| --------------------------------- | ---------------------- | ------ |
+| Reynolds number `Re`              | `P002`                 | `.rea` |
+| `1/Pe_N`                          | First `CONDUCT` entry  | `.rea` |
+| `1/Pe_B`                          | Second `CONDUCT` entry | `.rea` |
+| Nutrient Damköhler number `Da_N`  | `P050`                 | `.rea` |
+| Bacterial Damköhler number `Da_B` | `P051`                 | `.rea` |
+| Absorption coefficient `beta`     | `P053`                 | `.rea` |
+| Velocity initial conditions       | User routines          | `.usr` |
+| Velocity boundary conditions      | User routines          | `.usr` |
+| Scalar initial conditions         | User routines          | `.usr` |
+| Scalar boundary conditions        | User routines          | `.usr` |
+| Polynomial order                  | `lx1`                  | `SIZE` |
+
+The main parameter sweeps can therefore be performed primarily by modifying the `.rea` file.
+
+---
+
+## 8. Example of Changing Simulation Parameters
+
+Suppose a simulation is required with
+
+```math
 \mathrm{Re}=100,
-$$
+```
 
-$$
+```math
 \mathrm{Pe}_N=5000,
-$$
+```
 
-$$
+```math
 \mathrm{Pe}_B=10000,
-$$
+```
 
-$$
+```math
 \mathrm{Da}_N=0.02,
-$$
+```
 
-$$
+```math
 \mathrm{Da}_B=0.05,
-$$
+```
 
 and
 
-$$
+```math
 \beta=0.002.
-$$
+```
 
-The corresponding `.rea` parameters would include
+The corresponding parameters in the `.rea` file would be
 
 ```text
 -100.000     p002
@@ -545,43 +521,72 @@ The corresponding `.rea` parameters would include
 0.002000     p053 BETA ABSORPTION
 ```
 
-and the first two passive-scalar `CONDUCT` entries would be
+For the scalar diffusion coefficients,
+
+```math
+\frac{1}{\mathrm{Pe}_N}
+=
+\frac{1}{5000}
+=
+2\times10^{-4},
+```
+
+and
+
+```math
+\frac{1}{\mathrm{Pe}_B}
+=
+\frac{1}{10000}
+=
+1\times10^{-4}.
+```
+
+Therefore, the first two `CONDUCT` entries should be
+
+```text
+0.000200       0.000100
+```
+
+giving a passive-scalar line of the form
 
 ```text
 0.000200       0.000100       1.00000       1.00000       1.00000
 ```
 
-because
+---
 
-$$
-\frac{1}{\mathrm{Pe}_N}
-=======================
+## 9. Passive-Scalar File Contents
 
-# \frac{1}{5000}
+The passive-scalar simulation folder contains the Nek5000 files used for scalar advection, diffusion, and reaction.
 
-2\times10^{-4},
-$$
+The `.usr` file contains:
 
-and
+* scalar initial conditions
+* scalar boundary conditions
+* nutrient-consumption terms
+* bacterial-growth terms
+* nutrient-absorption flux conditions
+* other case-specific user routines
 
-$$
-\frac{1}{\mathrm{Pe}_B}
-=======================
+The `.rea` file contains:
 
-# \frac{1}{10000}
+* scalar diffusion coefficients
+* reaction parameters
+* Damköhler numbers
+* nutrient-absorption coefficient
+* other numerical and simulation parameters
 
-10^{-4}.
-$$
+Users should check the comments in both the `.usr` and `.rea` files before modifying parameters.
 
 ---
 
-# 9. Running the Simulations
+## 10. Running the Simulations
 
-Nek5000 can be obtained from the official repository:
+Nek5000 can be downloaded from
 
 https://github.com/Nek5000/Nek5000
 
-Official Nek5000 documentation:
+Official Nek5000 documentation is available at
 
 https://nek5000.github.io/NekDoc/
 
@@ -591,21 +596,27 @@ Compile a case using
 makenek <case_name>
 ```
 
-and run the compiled case using the appropriate Nek5000 execution command for the local or HPC environment.
+The simulation can then be run using the appropriate Nek5000 execution command for the local machine or HPC system.
 
-For MPI execution, a typical Nek5000 command is
+A typical MPI execution command is
 
 ```bash
 nekmpi <case_name> <number_of_MPI_ranks>
 ```
 
-or the corresponding cluster-specific `mpirun`/`srun` command.
+On systems using SLURM, the executable may instead be launched using a command such as
+
+```bash
+srun -n <number_of_MPI_ranks> ./nek5000
+```
+
+depending on the local Nek5000 installation and cluster configuration.
 
 ---
 
-## Important File-Naming Requirement
+## 11. File-Naming Requirement
 
-All Nek5000 files belonging to the same simulation case must use the same case-name prefix.
+All Nek5000 files belonging to the same simulation case must use the same filename prefix.
 
 For example,
 
@@ -616,19 +627,19 @@ case1.re2
 case1.ma2
 ```
 
-should all use the prefix
+must all use the common prefix
 
 ```text
 case1
 ```
 
-before running the simulation.
+before compiling and running the simulation.
 
 ---
 
-# 10. Repository Structure
+## 12. Repository Structure
 
-A typical directory structure is
+A typical repository structure is
 
 ```text
 Kumar_Mukherjee_PRE_simulation_files/
@@ -654,17 +665,17 @@ Kumar_Mukherjee_PRE_simulation_files/
 └── README.md
 ```
 
-Users interested in reproducing or extending the simulations should first identify the desired nondimensional parameters and modify the corresponding `.rea` entries according to the tables above.
+To reproduce or extend the simulations, users should identify the desired nondimensional parameters and modify the corresponding entries in the `.rea` file according to the parameter table above.
 
 ---
 
-# License
+## License
 
 This repository is licensed under the Apache License 2.0. See the `LICENSE` file for details.
 
 ---
 
-# Contact
+## Contact
 
 For questions regarding the code or simulations, contact:
 
