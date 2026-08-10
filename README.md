@@ -608,7 +608,7 @@ Users should check the comments in both the `.usr` and `.rea` files before modif
 
 ---
 
-## 10. Running the Simulations
+# D. Running the Simulations
 
 Nek5000 can be downloaded from
 
@@ -642,7 +642,7 @@ depending on the local Nek5000 installation and cluster configuration.
 
 ---
 
-## 11. File-Naming Requirement
+# E. File-Naming Requirement
 
 All Nek5000 files belonging to the same simulation case must use the same filename prefix.
 
@@ -665,33 +665,6 @@ before compiling and running the simulation.
 
 ---
 
-## 12. Repository Structure
-
-A typical repository structure is
-
-```text
-Kumar_Mukherjee_PRE_simulation_files/
-│
-├── Mesh_generation/
-│   └── generate_geometry.py
-│
-├── Flow_simulation/
-│   ├── case.usr
-│   ├── case.rea
-│   ├── case.re2
-│   ├── case.ma2
-│   └── SIZE
-│
-├── Passive_scalar_simulation/
-│   ├── case.usr
-│   ├── case.rea
-│   ├── case.re2
-│   ├── case.ma2
-│   └── SIZE
-│
-├── LICENSE
-└── README.md
-```
 
 To reproduce or extend the simulations, users should identify the desired nondimensional parameters and modify the corresponding entries in the `.rea` file according to the parameter table above.
 
