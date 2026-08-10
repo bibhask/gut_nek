@@ -14,7 +14,7 @@ The main nondimensional parameters, including the Reynolds number, Péclet numbe
 
 ---
 
-## 1. Mesh Generation
+# A. Mesh Generation
 
 The Python script generates a Gmsh geometry file with the `.geo` extension.
 
@@ -56,7 +56,7 @@ to generate the corresponding `.ma2` file.
 
 ---
 
-## 2. Flow Simulation
+# B. Flow Simulation
 
 The flow-simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
 
@@ -143,7 +143,7 @@ The velocity initial conditions and boundary conditions are defined in the corre
 
 ---
 
-## 3. Passive-Scalar Simulation
+## C. Passive-Scalar Simulation
 
 The passive-scalar simulations solve for two scalar fields:
 
@@ -152,7 +152,7 @@ The passive-scalar simulations solve for two scalar fields:
 
 The scalar fields undergo advection, diffusion, and reaction.
 
-### Nutrient Equation: PS1
+## 1. Nutrient Equation: PS1
 
 The nutrient concentration satisfies
 
@@ -167,7 +167,7 @@ D_N^* \nabla^2 N
 B\frac{N}{\bar{N}+N}.
 ```
 
-The diffusion coefficient is
+The non-dimensional diffusion coefficient is
 
 ```math
 D_N^*=\frac{1}{\mathrm{Pe}_N}.
@@ -198,7 +198,7 @@ B\frac{N}{\bar{N}+N}.
 
 ---
 
-### Bacterial Equation: PS2
+## 2. Bacterial Equation: PS2
 
 The bacterial concentration satisfies
 
@@ -213,7 +213,7 @@ D_B^* \nabla^2 B
 B\frac{N}{\bar{N}+N}.
 ```
 
-The diffusion coefficient is
+The non-dimensional diffusion coefficient is
 
 ```math
 D_B^*=\frac{1}{\mathrm{Pe}_B}.
@@ -242,7 +242,7 @@ Here, `N-bar` is the nutrient concentration scale appearing in the Monod-type re
 
 ---
 
-## 4. Passive-Scalar Diffusion Parameters
+## 3. Passive Scalar Diffusion Parameters
 
 The scalar diffusion coefficients are specified in the passive-scalar section of the `.rea` file.
 
@@ -346,7 +346,7 @@ The corresponding `.rea` line becomes
 
 ---
 
-## 5. Reaction Parameters
+## 4. Reaction Parameters
 
 The reaction parameters are specified directly through Nek5000 parameters in the `.rea` file.
 
@@ -411,7 +411,7 @@ to
 
 ---
 
-## 6. Nutrient Absorption Boundary Condition
+## 5. Nutrient Absorption Boundary Condition
 
 The nutrient field (`PS1`) includes an absorption boundary condition of the form
 
@@ -430,6 +430,7 @@ Therefore, the boundary condition is implemented in the `.usr` file using the eq
 ```fortran
 flux = -param(53)*N
 ```
+
 
 or, in terms of the passive-scalar field,
 
@@ -456,6 +457,33 @@ corresponds to
 Changing `P053` therefore changes the strength of nutrient absorption at the corresponding boundary.
 
 The scalar flux boundary condition itself is defined in the `.usr` file.
+
+
+## 6. Nutrient-dependent Absorption Boundary Condition
+The absorption term can be modified directly in the `.usr` file to incorporate **nutrient-dependent absorption** or other functional forms. This allows alternative absorption models to be implemented and tested without changing the scalar transport equation.
+
+For example, in the present simulations, a nutrient-dependent absorption law of the form
+
+```math
+\mathrm{flux}
+=
+-\beta
+\left(
+\frac{N}
+{N/N_{\mathrm{abs}}+1}
+\right)
+```
+
+is used, where `N = PS1`, `beta = PARAM(53)`, and `N_abs` is the characteristic nutrient concentration controlling the concentration dependence of absorption.
+
+The corresponding implementation can be written in the `.usr` file as
+
+```fortran
+flux = -param(53)*(ps1/(ps1/n_abs + 1.0))
+```
+
+Other functional forms for the absorption flux can similarly be defined and tested in this section of the `.usr` file.
+
 
 ---
 
