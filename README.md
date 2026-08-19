@@ -57,7 +57,7 @@ to generate the corresponding `.ma2` file.
 ---
 
 # B. Flow Simulation
-
+## 1. Flow strength
 The flow-simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
 
 Typical files include:
@@ -141,7 +141,7 @@ Therefore, to vary the Reynolds number, modify `P002` in the corresponding `.rea
 
 The velocity initial conditions and boundary conditions are defined in the corresponding `.usr` file.
 
-### Womersley Flow
+## 2. Womersley Flow
 
 Oscillatory flow is imposed in the `.usr` file using a Womersley-type velocity profile. The main inputs are
 
@@ -201,17 +201,13 @@ The nutrient concentration satisfies
 +
 \mathbf{u}\cdot\nabla N
 =
-D_N^* \nabla^2 N
+\frac{1}{\mathrm{Pe}_N} \nabla^2 N
 -
 \mathrm{PARAM}(50)
 B\frac{N}{\bar{N}+N}.
 ```
 
-The non-dimensional diffusion coefficient is
 
-```math
-D_N^*=\frac{1}{\mathrm{Pe}_N}.
-```
 
 For the present model,
 
@@ -247,17 +243,12 @@ The bacterial concentration satisfies
 +
 \mathbf{u}\cdot\nabla B
 =
-D_B^* \nabla^2 B
+\frac{1}{\mathrm{Pe}_B} \nabla^2 B
 +
 \mathrm{PARAM}(51)
 B\frac{N}{\bar{N}+N}.
 ```
 
-The non-dimensional diffusion coefficient is
-
-```math
-D_B^*=\frac{1}{\mathrm{Pe}_B}.
-```
 
 For the present model,
 
@@ -312,17 +303,7 @@ First CONDUCT value  → PS1 → nutrient diffusion
 Second CONDUCT value → PS2 → bacterial diffusion
 ```
 
-For this nondimensional formulation,
 
-```math
-D_N^*=\frac{1}{\mathrm{Pe}_N}
-```
-
-and
-
-```math
-D_B^*=\frac{1}{\mathrm{Pe}_B}.
-```
 
 Therefore,
 
