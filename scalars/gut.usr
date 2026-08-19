@@ -146,7 +146,8 @@ c      ux =
       temp = 0.0
       if (ifield.eq.3) then
          ps1 = ps(1)
-         flux = -b*ps1
+        flux = -b*ps1                  !linear absorption
+c       flux = -b*ps1/(ps1/0.1 + 1)    !nutrient-depentdent absorption 
 c         flux = 0.0
 	 temp = 1.0
       elseif (ifield.eq.4) then
