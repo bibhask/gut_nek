@@ -12,6 +12,24 @@ The repository contains three main components:
 
 The main nondimensional parameters, including the Reynolds number, Péclet numbers, Damköhler numbers, and nutrient-absorption coefficient, can be varied directly through the Nek5000 `.rea` files as described below.
 
+## Prerequisites
+
+These simulations use **Nek5000**, an open-source spectral-element CFD solver. Users should have basic familiarity with Linux/Unix commands, Fortran, and MPI-based parallel computing. Nek5000 requires compatible C and Fortran compilers, GNU Make, and an MPI implementation for parallel runs.
+
+Useful resources:
+
+* [Nek5000 Documentation](https://nek5000.github.io/NekDoc/)
+* [Nek5000 Quickstart Guide](https://nek5000.github.io/NekDoc/quickstart.html)
+* [Nek5000 Tutorials](https://nek5000.github.io/NekDoc/tutorials.html)
+* [Nek5000 GitHub Repository](https://github.com/Nek5000/Nek5000)
+* [NekExamples Repository](https://github.com/Nek5000/NekExamples)
+
+New users are recommended to begin with the **Fully Developed Laminar Flow** tutorial before modifying the cases in this repository.
+
+
+
+
+
 ---
 
 # A. Mesh Generation
