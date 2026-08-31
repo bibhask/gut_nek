@@ -6,9 +6,9 @@ This repository contains the mesh-generation scripts and Nek5000 files used for 
 
 The repository contains three main components:
 
-1. **Mesh-generation files**
-2. **Flow-simulation files**
-3. **Passive-scalar simulation files**
+1. **Mesh generation files**
+2. **Flow simulation files**
+3. **Passive scalar simulation files**
 
 The main nondimensional parameters, including the Reynolds number, Péclet numbers, Damköhler numbers, and nutrient-absorption coefficient, can be varied directly through the Nek5000 `.rea` files as described below.
 
@@ -36,7 +36,7 @@ New users are recommended to begin with the **Fully Developed Laminar Flow** tut
 
 The Python script generates a Gmsh geometry file with the `.geo` extension.
 
-The mesh-generation workflow is
+The mesh generation workflow is
 
 
 python script → .geo → .msh → gmsh2nek → .re2 → genmap → .ma2
@@ -75,7 +75,7 @@ to generate the corresponding `.ma2` file.
 
 # B. Flow simulation
 ## 1. Flow strength
-The flow-simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
+The flow simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
 
 Typical files include:
 
@@ -286,7 +286,7 @@ Therefore, the bacterial equation can equivalently be written as
 B\frac{N}{\bar{N}+N}.
 ```
 
-Here, `N-bar` is the nutrient concentration scale appearing in the Monod-type reaction term.
+Here, $\bar{N}$ is the nutrient concentration scale appearing in the Monod-type reaction term.
 
 ---
 
@@ -321,12 +321,10 @@ Second CONDUCT value → PS2 → bacterial diffusion
 ```
 
 
+1st CONDUCT value = $1/\mathrm{Pe}_N$  
 
-Therefore,
 
-```text
-First CONDUCT value  = 1/Pe_N
-Second CONDUCT value = 1/Pe_B
+2nd CONDUCT value = $1/\mathrm{Pe}_B$
 ```
 
 For example,
@@ -401,9 +399,9 @@ The parameters have the following meanings:
 
 | `.rea` parameter | Model parameter     | Description                           |
 | ---------------- | ------------------- | ------------------------------------- |
-| `P050`           | `Da_N = kappa Da_B` | Nutrient consumption Damköhler number |
-| `P051`           | `Da_B`              | Bacterial growth Damköhler number     |
-| `P053`           | `beta`              | Nutrient absorption coefficient       |
+| `P050`           | $\mathrm{Da}_{N}$ | Nutrient consumption Damköhler number |
+| `P051`           | $\mathrm{Da}_{B}$              | Bacterial growth Damköhler number     |
+| `P053`           | $\beta$              | Nutrient absorption coefficient       |
 
 For the values shown above,
 
@@ -512,7 +510,7 @@ For example, in the present simulations, a nutrient-dependent absorption law of 
 \right)
 ```
 
-is used, where `N = PS1`, `beta = PARAM(53)`, and `N_abs` is the characteristic nutrient concentration controlling the concentration dependence of absorption.
+is used, where `N = PS1`, `beta = PARAM(53)`, and $N_{abs}$ is the characteristic nutrient concentration controlling the concentration dependence of absorption.
 
 The corresponding implementation can be written in the `.usr` file as
 
@@ -532,10 +530,10 @@ The principal nondimensional parameters used in the simulations can be modified 
 | Model parameter                   | Nek5000 input          | File   |
 | --------------------------------- | ---------------------- | ------ |
 | Reynolds number `Re`              | `P002`                 | `.rea` |
-| `1/Pe_N`                          | First `CONDUCT` entry  | `.rea` |
-| `1/Pe_B`                          | Second `CONDUCT` entry | `.rea` |
-| Nutrient Damköhler number `Da_N`  | `P050`                 | `.rea` |
-| Bacterial Damköhler number `Da_B` | `P051`                 | `.rea` |
+| $1/\mathrm{Pe}_N$                          | First `CONDUCT` entry  | `.rea` |
+| $1/\mathrm{Pe}_B$                          | Second `CONDUCT` entry | `.rea` |
+| Nutrient Damköhler number $\mathrm{Da}_N$  | `P050`                 | `.rea` |
+| Bacterial Damköhler number $\mathrm{Da}_B$ | `P051`                 | `.rea` |
 | Absorption coefficient `beta`     | `P053`                 | `.rea` |
 | Velocity initial conditions       | User routines          | `.usr` |
 | Velocity boundary conditions      | User routines          | `.usr` |
