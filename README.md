@@ -2,19 +2,19 @@
 
 ## Nek5000 flow and scalar simulations for the results reported in Kumar & Mukherjee, Phys. Rev. E., 2026
 
-This repository contains the mesh-generation scripts and Nek5000 files used for the flow and passive-scalar simulations reported by Kumar and Mukherjee.
+This repository contains the mesh generation scripts and Nek5000 files used for the flow and passive-scalar simulations reported by Kumar and Mukherjee.
 
 The repository contains three main components:
 
 1. **Mesh generation files**
 2. **Flow simulation files**
-3. **Passive scalar simulation files**
+3. **Scalar simulation files**
 
-The main nondimensional parameters, including the Reynolds number, Péclet numbers, Damköhler numbers, and nutrient-absorption coefficient, can be varied directly through the Nek5000 `.rea` files as described below.
+The main nondimensional parameters, including the Reynolds number, Péclet numbers, Damköhler numbers, and nutrient absorption coefficient, can be varied directly through the Nek5000 `.rea` files as described below.
 
 ## Prerequisites
 
-These simulations use **Nek5000**, an open-source spectral-element CFD solver. Users should have basic familiarity with Linux/Unix commands, Fortran, and MPI-based parallel computing. Nek5000 requires compatible C and Fortran compilers, GNU Make, and an MPI implementation for parallel runs.
+These simulations use **Nek5000**, an open-source spectral element CFD solver. Users should have basic familiarity with Linux/Unix commands, Fortran, and MPI-based parallel computing. Nek5000 requires compatible C and Fortran compilers, GNU Make, and an MPI implementation for parallel runs.
 
 Useful resources:
 
@@ -165,10 +165,10 @@ Oscillatory flow is imposed in the `.usr` file using a Womersley-type velocity p
 | `.rea` parameter | Quantity                  |
 | ---------------- | ------------------------- |
 | `P002`           | Reynolds number `Re`      |
-| `P003`           | Oscillation amplitude `A` |
+| `P003`           | Amplitude `A` |
 | `P004`           | Frequency `f`             |
 
-The Reynolds number is used to calculate the characteristic velocity,
+The Reynolds number is used to calculate the velocity scale,
 
 ```fortran
 re  = param(2)
@@ -344,7 +344,8 @@ corresponds approximately to
 
 To run a simulation with different Péclet numbers, replace these entries with
 
-```text
+```math
+
 1/Pe_N       1/Pe_B
 ```
 
