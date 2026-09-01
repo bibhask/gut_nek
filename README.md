@@ -329,7 +329,7 @@ Second CONDUCT value → PS2 → bacterial diffusion
 
 For example,
 
-```text
+
 0.00013       0.00013
 ```
 
@@ -511,7 +511,7 @@ For example, in the present simulations, a nutrient-dependent absorption law of 
 \right)
 ```
 
-is used, where `N = PS1`, `beta = PARAM(53)`, and $N_{abs}$ is the characteristic nutrient concentration controlling the concentration dependence of absorption.
+is used, where N = PS1, $\beta$ = PARAM(53), and $N_{abs}$ is the characteristic nutrient concentration controlling the concentration dependence of absorption.
 
 The corresponding implementation can be written in the `.usr` file as
 
