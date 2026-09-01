@@ -286,7 +286,7 @@ Therefore, the bacterial equation can equivalently be written as
 B\frac{N}{\bar{N}+N}.
 ```
 
-Here, $\bar{N}$ is the nutrient concentration scale appearing in the Monod-type reaction term.
+Here, $\bar{N}$ is the nutrient concentration cutoff appearing in the Monod-type reaction term.
 
 ---
 
