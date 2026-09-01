@@ -621,7 +621,7 @@ giving a scalar line of the form
 
 ---
 
-## 9. Scalar file Contents
+## 9. Scalar file contents
 
 The scalar simulation folder contains the Nek5000 files used for scalar advection, diffusion, and reaction.
 
@@ -646,7 +646,7 @@ Users should check the comments in both the `.usr` and `.rea` files before modif
 
 ---
 
-# D. Running the Simulations
+# D. Running the simulations
 
 Nek5000 can be downloaded from
 
@@ -680,7 +680,7 @@ depending on the local Nek5000 installation and cluster configuration.
 
 ---
 
-# E. File naming Requirement
+# E. File naming requirement
 
 All Nek5000 files belonging to the same simulation case must use the same filename prefix.
 
