@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+
+title: "gut_kumar_mukherjee"
+
+authors:
+  - family-names: "Kumar"
+    given-names: "Bibhas"
+
+  - family-names: "Mukherjee"
+    given-names: "Saikat"
+
+version: "1.0.0"
