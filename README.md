@@ -18,13 +18,13 @@ These simulations use **Nek5000**, an open-source spectral element CFD solver. U
 
 Useful resources:
 
-* [Nek5000 Documentation](https://nek5000.github.io/NekDoc/)
-* [Nek5000 Quickstart Guide](https://nek5000.github.io/NekDoc/quickstart.html)
-* [Nek5000 Tutorials](https://nek5000.github.io/NekDoc/tutorials.html)
-* [Nek5000 GitHub Repository](https://github.com/Nek5000/Nek5000)
-* [NekExamples Repository](https://github.com/Nek5000/NekExamples)
+* [Nek5000 documentation](https://nek5000.github.io/NekDoc/)
+* [Nek5000 Quickstart guide](https://nek5000.github.io/NekDoc/quickstart.html)
+* [Nek5000 tutorials](https://nek5000.github.io/NekDoc/tutorials.html)
+* [Nek5000 GitHub repository](https://github.com/Nek5000/Nek5000)
+* [NekExamples repository](https://github.com/Nek5000/NekExamples)
 
-New users are recommended to begin with the **Fully Developed Laminar Flow** tutorial before modifying the cases in this repository.
+New users are recommended to begin with the [Fully Developed Laminar Flow](https://github.com/Nek5000/NekExamples/tree/master/pipe) tutorial before modifying the cases in this repository.
 
 
 
@@ -74,7 +74,7 @@ to generate the corresponding `.ma2` file.
 ---
 
 # B. Flow simulation
-## 1. Flow strength
+## 1. Governing equations of fluid flow
 The flow simulation directory contains the Nek5000 files required for solving the incompressible flow problem.
 
 Typical files include:
@@ -85,7 +85,7 @@ Typical files include:
 * `.ma2` — mesh partitioning information
 * `SIZE` — memory allocation and spectral-element discretization settings
 
-### Governing Equations
+### Governing equations
 
 The nondimensional momentum equation solved in the flow simulations is
 
@@ -158,9 +158,9 @@ Therefore, to vary the Reynolds number, modify `P002` in the corresponding `.rea
 
 The velocity initial conditions and boundary conditions are defined in the corresponding `.usr` file.
 
-## 2. Womersley flow
+## 2. Inlet flow profile
 
-Oscillatory flow is imposed in the `.usr` file using a Womersley-type velocity profile. The main inputs are
+Oscillatory flow is imposed in the `.usr` file using a Womersley-type inlet velocity profile. The main inputs are
 
 | `.rea` parameter | Quantity                  |
 | ---------------- | ------------------------- |
@@ -347,7 +347,7 @@ To run a simulation with different Péclet numbers, replace these entries with
 
 ```math
 
-1/Pe_N       1/Pe_B
+1/\mathrm{Pe}_N       1/\mathrm{Pe}_B
 ```
 
 respectively.
@@ -384,7 +384,7 @@ The corresponding `.rea` line becomes
 
 ---
 
-## 4. Reaction Parameters
+## 4. Reaction parameters
 
 The reaction parameters are specified directly through Nek5000 parameters in the `.rea` file.
 
@@ -449,7 +449,7 @@ to
 
 ---
 
-## 5. Nutrient Absorption Boundary Condition
+## 5. Nutrient absorption boundary condition
 
 The nutrient field (`PS1`) includes an absorption boundary condition of the form
 
@@ -470,7 +470,7 @@ flux = -param(53)*N
 ```
 
 
-or, in terms of the passive-scalar field,
+or, in terms of the scalar field,
 
 ```math
 \mathrm{flux}
