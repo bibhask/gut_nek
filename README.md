@@ -24,7 +24,7 @@ Useful resources:
 * [Nek5000 GitHub repository](https://github.com/Nek5000/Nek5000)
 * [NekExamples repository](https://github.com/Nek5000/NekExamples)
 
-New users are recommended to begin with the [Fully Developed Laminar Flow](https://github.com/Nek5000/NekExamples/tree/master/pipe) tutorial before modifying the cases in this repository.
+New users are recommended to begin with the [a fully developed laminar flow case](https://github.com/Nek5000/NekExamples/tree/master/pipe) tutorial before modifying the cases in this repository.
 
 
 
@@ -497,7 +497,7 @@ Changing `P053` therefore changes the strength of nutrient absorption at the cor
 The scalar flux boundary condition itself is defined in the `.usr` file.
 
 
-## 6. Nutrient-dependent absorption boundary Condition
+## 6. Nutrient-dependent absorption boundary condition
 The absorption term can be modified directly in the `.usr` file to incorporate **nutrient-dependent absorption** or other functional forms. This allows alternative absorption models to be implemented and tested without changing the scalar transport equation.
 
 For example, in the present simulations, a nutrient-dependent absorption law of the form
