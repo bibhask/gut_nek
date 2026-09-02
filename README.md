@@ -44,7 +44,7 @@ python script → .geo → .msh → gmsh2nek → .re2 → genmap → .ma2
 Run the python script using
 
 ```bash
-python3 gut_maker_v2.py
+python3 SI_maker.py
 ```
 Note: Users are encouraged to build their own mesh as per requirement. Varying $\chi$ might require necessary adjustments.    
 Open the generated `.geo` file in [Gmsh](https://gmsh.info/), generate the mesh, and export it as a `.msh` file.
